@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express"
 import dayjs from "dayjs"
 import axios from "axios"
 
+import cashControllerInstance from "./cash.controller"
 
 class CashRouter {
 
@@ -16,9 +17,9 @@ class CashRouter {
         this.router.get('/', this.getHBACash)
     }
 
-    private getHBACash(req: Request, res: Response) {
+    async getHBACash(req: {query: {gte: string, lte: string}}, res: string | any) {
         try {
-            const data: number[] = [10, 20, 30]
+            const data = await cashControllerInstance.getCashTable(req.query)
             res.status(200).json({ data: data })
         } catch (e: any) {
             console.log(e.message)

@@ -1,0 +1,15 @@
+{
+  "name": "hba-cash-ts",
+  "version": "1.0.0",
+  "description": "переписываю HBA Cash на typescript и ооп",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "cd server && npm run dev"
+  },
+  "author": "w3b-c0d3r",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

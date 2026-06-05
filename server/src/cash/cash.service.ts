@@ -13,8 +13,8 @@ class CashService {
             const token: string = response.data.data.token
             
             return token
-        } catch (e: any) {
-            console.log(e.message)
+        } catch (e: unknown) {
+            console.log(e)
             return null
         }
     }
@@ -91,8 +91,8 @@ class CashService {
             aggregatedDataArray = Object.values(aggregatedDataObject)
 
             return aggregatedDataArray
-        } catch (e: any) {
-            console.log(e.message)
+        } catch (e: unknown) {
+            console.log(e)
             return []
         }
     }

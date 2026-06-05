@@ -9,8 +9,8 @@ class CashController {
         try {
             const tabledata = await cashServiceInstance.getResidenceLeads(query)
             return tabledata
-        } catch (e: any) {
-            console.log(e.message)
+        } catch (e: unknown) {
+            console.log(e)
             return null
         }
     }

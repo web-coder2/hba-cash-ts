@@ -21,9 +21,8 @@ class CashRouter {
         try {
             const data = await cashControllerInstance.getCashTable(req.query)
             res.status(200).json({ data: data })
-        } catch (e: any) {
-            console.log(e.message)
-            res.status(500).json({ err: e.message })
+        } catch (e: unknown) {
+            res.status(500).json({ error: e })
         }
     }
 

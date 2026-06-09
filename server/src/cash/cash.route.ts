@@ -15,11 +15,21 @@ class CashRouter {
 
     init() {
         this.router.get('/', this.getHBACash)
+        this.router.get('/stats/', this.getBrokersStats)
     }
 
     async getHBACash(req: {query: {gte: string, lte: string}}, res: string | any) {
         try {
             const data = await cashControllerInstance.getCashTable(req.query)
+            res.status(200).json({ data: data })
+        } catch (e: unknown) {
+            res.status(500).json({ error: e })
+        }
+    }
+
+    async getBrokersStats(req: {query: {gte: string, lte: string}}, res: string | any) {
+        try {
+            const data = await cashControllerInstance.getBrokersStats(req.query)
             res.status(200).json({ data: data })
         } catch (e: unknown) {
             res.status(500).json({ error: e })

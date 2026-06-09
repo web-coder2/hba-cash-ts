@@ -72,7 +72,7 @@ class CashService {
             const fullBonusesData: fullBonusesDataType = []
 
             for (let now: string = dayjs(gte).format('YYYY-MM-DD'); now <= dayjs(lte).format('YYYY-MM-DD'); now = dayjs(now).add(1, 'day').format('YYYY-MM-DD')) {
-                const brokersBonuseses: number | null = await this.getBrokersBonuses(gte, lte, token)
+                const brokersBonuseses: number | null = await this.getBrokersBonuses(now, now, token)
                 
                 if (typeof(brokersBonuseses) === 'number') {
 
@@ -165,6 +165,89 @@ class CashService {
         } catch (e: unknown) {
             console.log(e)
             return []
+        }
+    }
+
+    public async getBrokersStats(query: { gte: string, lte: string }) {
+        try {
+
+            const gte: string = query.gte
+            const lte: string = query.lte
+
+            const token: string | null = await this.getResidenceToken()
+
+            const response = await axios.get('https://residence.hbnetwork.ru/api/leads', {
+                headers: { Authorization: `Bearer ${token}` },
+                params: {
+                    startedAt: [
+                        'gte:' + dayjs(gte).format('YYYY-MM-DD'),
+                        'lte:' + dayjs(lte).format('YYYY-MM-DD')
+                    ],
+                    _select: 'status phone startedAt price',
+                    _populate: 'userId',
+                    _limit: 0
+                }
+            })
+
+            type usersStatsType = {
+                name: string,
+                countLeads: number,
+                countHolds: number,
+                sumHold: number,
+                phones: string[]
+            }
+
+            let usersStatsObject: {
+                [broker: string]: usersStatsType
+            } = {}
+
+            type leadsDataModel = {
+                startedAt: string,
+                status: string,
+                userId: {
+                    name: string
+                },
+                price: {
+                    offer: number
+                }
+                phone: string
+            }
+            
+            let usersStatsArr: usersStatsType[] = []
+
+            const holdsStatuses: string[] = ['hold', 'confirmed', 'refused']
+
+            let leadsDataArray: leadsDataModel[] = response.data.data
+
+            leadsDataArray.forEach((lead) => {
+                let broker = lead.userId?.name
+                let isHold = holdsStatuses.includes(lead.status) ? 1 : 0
+                let sumHold = holdsStatuses.includes(lead.status) ? lead.price.offer : 0
+                let phone = lead.phone
+
+                if (usersStatsObject[broker]) {
+                    usersStatsObject[broker].countLeads += 1
+                    usersStatsObject[broker].countHolds += isHold
+                    usersStatsObject[broker].sumHold += sumHold
+                    usersStatsObject[broker].phones.push(phone)
+                } else {
+                    usersStatsObject[broker] = {
+                        name: broker,
+                        countLeads: 1,
+                        countHolds: isHold,
+                        sumHold: sumHold,
+                        phones: [phone]
+                    }
+                }
+            })
+
+            usersStatsArr = Object.values(usersStatsObject)
+
+            return usersStatsArr
+
+        } catch (e: unknown) {
+            console.log(e)
+            return null
         }
     }
 

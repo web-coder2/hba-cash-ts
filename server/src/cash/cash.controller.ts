@@ -15,6 +15,16 @@ class CashController {
         }
     }
 
+    public async getBrokersStats(query: {gte: string, lte: string}) {
+        try {
+            const brokersData = await cashServiceInstance.getBrokersStats(query)
+            return brokersData
+        } catch (e: unknown) {
+            console.log(e)
+            return null
+        }
+    }
+
 }
 
 const cashControllerInstance = new CashController()

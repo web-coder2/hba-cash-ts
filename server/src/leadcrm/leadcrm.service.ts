@@ -34,7 +34,22 @@ class LeadcrmService {
                     lte: query.lte
                 }
             })
-            const data: IleadSalaryData = response.data.data
+
+            const data: IleadSalaryData = {
+                users: []
+            }
+
+            response.data.data.forEach((user: leadorubStat) => {
+                data.users.push({
+                    name: user.name,
+                    email: user.email,
+                    countLeads: user.countLeads,
+                    countHolds: user.countHolds,
+                    countCalls: user.countCalls,
+                    salary: user.salary,
+                    clear: user.clear
+                })
+            })
 
             return data
         } catch (e: unknown) {
